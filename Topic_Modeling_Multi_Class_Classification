@@ -1,0 +1,1406 @@
+{
+ "cells": [
+  {
+   "cell_type": "code",
+   "execution_count": 127,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "The watermark extension is already loaded. To reload it, use:\n",
+      "  %reload_ext watermark\n"
+     ]
+    }
+   ],
+   "source": [
+    "%load_ext watermark"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 128,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Chandra Dronavajjala 2016-07-26 16:26:36 \n",
+      "\n",
+      "CPython 3.5.2\n",
+      "IPython 5.0.0\n",
+      "\n",
+      "numpy 1.11.1\n",
+      "pandas 0.18.1\n",
+      "Git hash: \n"
+     ]
+    }
+   ],
+   "source": [
+    "%watermark -a \"Chandra Dronavajjala\" -d -t -v -p numpy,pandas -g"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 129,
+   "metadata": {
+    "collapsed": true
+   },
+   "outputs": [],
+   "source": [
+    "import os"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 130,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "'/home/cdronava/datasets/topic_modelling'"
+      ]
+     },
+     "execution_count": 130,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "os.getcwd()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 131,
+   "metadata": {
+    "collapsed": true
+   },
+   "outputs": [],
+   "source": [
+    "os.chdir('/home/cdronava/datasets/topic_modelling')"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### Name of the data file"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 132,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "bbc_articles_labels_all.csv\r\n"
+     ]
+    }
+   ],
+   "source": [
+    "!ls"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 133,
+   "metadata": {
+    "collapsed": true
+   },
+   "outputs": [],
+   "source": [
+    "from time import sleep"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 135,
+   "metadata": {
+    "collapsed": true
+   },
+   "outputs": [],
+   "source": [
+    "import pandas as pd"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## Read the csv file"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 136,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [],
+   "source": [
+    "import chardet"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 137,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [],
+   "source": [
+    "with open('bbc_articles_labels_all.csv', 'rb') as f:\n",
+    "    result = chardet.detect(f.read())"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 138,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "dict"
+      ]
+     },
+     "execution_count": 138,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "type(result)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 139,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [],
+   "source": [
+    "data = pd.read_csv('bbc_articles_labels_all.csv', encoding = result['encoding'])"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 140,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>category</th>\n",
+       "      <th>text</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>0</th>\n",
+       "      <td>sport</td>\n",
+       "      <td>Kewell waits as injury drags on Liverpool wing...</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>1</th>\n",
+       "      <td>politics</td>\n",
+       "      <td>Blunkett tells of love and pain David Blunkett...</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2</th>\n",
+       "      <td>sport</td>\n",
+       "      <td>Lewsey puzzle over disallowed try England's Jo...</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>3</th>\n",
+       "      <td>politics</td>\n",
+       "      <td>UK rebate 'unjustified' - Chirac French presid...</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>4</th>\n",
+       "      <td>business</td>\n",
+       "      <td>Millions go missing at China bank Two senior o...</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "   category                                               text\n",
+       "0     sport  Kewell waits as injury drags on Liverpool wing...\n",
+       "1  politics  Blunkett tells of love and pain David Blunkett...\n",
+       "2     sport  Lewsey puzzle over disallowed try England's Jo...\n",
+       "3  politics  UK rebate 'unjustified' - Chirac French presid...\n",
+       "4  business  Millions go missing at China bank Two senior o..."
+      ]
+     },
+     "execution_count": 140,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "data.head()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 260,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "(2225, 1)"
+      ]
+     },
+     "execution_count": 260,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "## Dimensions of the of the file its 2225 X 2\n",
+    "data.shape[:]"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### Feature Engineering using TfidfVectorizer"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 143,
+   "metadata": {
+    "collapsed": true
+   },
+   "outputs": [],
+   "source": [
+    "from sklearn.feature_extraction.text import TfidfVectorizer"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 144,
+   "metadata": {
+    "collapsed": true
+   },
+   "outputs": [],
+   "source": [
+    "from nltk.corpus import stopwords"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 145,
+   "metadata": {
+    "collapsed": true
+   },
+   "outputs": [],
+   "source": [
+    "from nltk.stem.porter import *"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 146,
+   "metadata": {
+    "collapsed": true
+   },
+   "outputs": [],
+   "source": [
+    "def remove_stop_words(dataframe):\n",
+    "    \"\"\"\n",
+    "    Helper function to remove stop words\n",
+    "    from the raw data\n",
+    "    \"\"\"\n",
+    "    stop = stopwords.words('english')\n",
+    "    \n",
+    "    for i, row in dataframe.iterrows():\n",
+    "        t = row[\"text\"].lower().split(\" \")\n",
+    "        \n",
+    "        t = (\" \").join([z for z in t if z not in stop])\n",
+    "        \n",
+    "        dataframe.set_value(i, \"text\", t)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 147,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [],
+   "source": [
+    "remove_stop_words(data)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 148,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [],
+   "source": [
+    "y = data.category.values"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 149,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "numpy.ndarray"
+      ]
+     },
+     "execution_count": 149,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "type(y)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 150,
+   "metadata": {
+    "collapsed": true
+   },
+   "outputs": [],
+   "source": [
+    "# dropping target variable\n",
+    "data = data.drop(['category'], axis=1)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 151,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>text</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>0</th>\n",
+       "      <td>kewell waits injury drags liverpool winger har...</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>1</th>\n",
+       "      <td>blunkett tells love pain david blunkett spoken...</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2</th>\n",
+       "      <td>lewsey puzzle disallowed try england's josh le...</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>3</th>\n",
+       "      <td>uk rebate 'unjustified' - chirac french presid...</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>4</th>\n",
+       "      <td>millions go missing china bank two senior offi...</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "                                                text\n",
+       "0  kewell waits injury drags liverpool winger har...\n",
+       "1  blunkett tells love pain david blunkett spoken...\n",
+       "2  lewsey puzzle disallowed try england's josh le...\n",
+       "3  uk rebate 'unjustified' - chirac french presid...\n",
+       "4  millions go missing china bank two senior offi..."
+      ]
+     },
+     "execution_count": 151,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "data.head()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 152,
+   "metadata": {
+    "collapsed": true
+   },
+   "outputs": [],
+   "source": [
+    "# do some lambda magic on text columns\n",
+    "datalist = list(data.apply(lambda x:'%s' % (x['text']), axis=1))"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 153,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "['kewell waits injury drags liverpool winger harry kewell struggling recover achilles tendinitis problem may recover march, claims agent. kewell, 26, hoped play fulham last weekend ready champions league tie bayer leverkusen 22 february. bernie mandic said: \"he\\'s scans don\\'t show anything substantial. \"but despite best efforts moment simply can\\'t shake discomfort get back park.\" mandic continued sydney morning herald: \"harry\\'s struggling bit club everything get right. \"harry desperate fit fulham game part plan play leverkusen match.\" kewell played since december 19 misses international duty week, australia facing south africa durban wednesday. ',\n",
+       " 'blunkett tells love pain david blunkett spoken love married publisher kimberly quinn first time. home secretary described affected friends personal life, said great believer personal responsibility. mr blunkett taking legal action gain access mrs quinn\\'s two-year-old son. denies mr blunkett\\'s. interview bbc radio sheffield made allegations fast-tracked visa mrs quinn\\'s nanny. allegations, denied, investigated sir alan budd. mr blunkett talked fell love - resisted desire go public. apparent reference court action gain access son, says great believer responsibility consequences, even painful. mr blunkett told bbc radio sheffield: \"i fell love someone wouldn\\'t go public things started go badly wrong summer, news world picked story. \"i tried three years make something work. \"i haven\\'t spoken don\\'t intend to. even biography that\\'s written i\\'ve ensured there\\'s little possible.\" bbc political correspondent carole walker said timing broadcast unlikely help efforts show concentrating getting job home secretary. shadow home secretary david davis says mr blunkett quit found influenced visa process even indirectly. reports claimed mr blunkett chaired meeting discuss delays visa system learned nanny leoncia casalme\\'s wait. home office said would sir alan\\'s inquiry decide meeting relevant. home office minister fiona mactaggart said hoped mr blunkett would survive job. \"i work every day always surprised focused job hand, working deal things,\" said. told bbc one\\'s breakfast frost programme: \"he really job hope (survive).\" ',\n",
+       " 'lewsey puzzle disallowed try england\\'s josh lewsey claimed denied late try side\\'s six nations loss ireland. wasps wing insisted grounded ball bundled line said referee jonathan kaplan made wrong decision. \"i\\'m positive touched ball line,\" lewsey told bbc sport. \"it certainly wasn\\'t turnover. \"i driven put ball ground. whistle went let go ball.\" lewsey added: \"one irish players scooped back whistle surprise referee gave turnover. \"as far i\\'m concerned, incident mark cueto\\'s effort charlie hodgson\\'s cross-field kick led looked like good try two key elements game.\" cueto also puzzled try disallowed kaplan. \"i don\\'t think could offside for, without doubt, behind ball,\" said sale player. \"the move planned technique, cuff. rehearse time time again. \"i wouldn\\'t say robbed, decisions go go you. today went us that\\'s tough international level.\" ']"
+      ]
+     },
+     "execution_count": 153,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "datalist[:3]"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 154,
+   "metadata": {
+    "collapsed": true
+   },
+   "outputs": [],
+   "source": [
+    "# the infamous tfidf vectorizer (Do you remember this one?)\n",
+    "tfv = TfidfVectorizer(min_df=2, \n",
+    "        strip_accents='unicode', analyzer='word',token_pattern=r'\\w{1,}',\n",
+    "        ngram_range=(1, 2), use_idf=1,smooth_idf=1,sublinear_tf=1,\n",
+    "        stop_words = 'english')"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 155,
+   "metadata": {
+    "collapsed": false,
+    "scrolled": true
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "TfidfVectorizer(analyzer='word', binary=False, decode_error='strict',\n",
+       "        dtype=<class 'numpy.int64'>, encoding='utf-8', input='content',\n",
+       "        lowercase=True, max_df=1.0, max_features=None, min_df=2,\n",
+       "        ngram_range=(1, 2), norm='l2', preprocessor=None, smooth_idf=1,\n",
+       "        stop_words='english', strip_accents='unicode', sublinear_tf=1,\n",
+       "        token_pattern='\\\\w{1,}', tokenizer=None, use_idf=1,\n",
+       "        vocabulary=None)"
+      ]
+     },
+     "execution_count": 155,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "# Fit TFIDF\n",
+    "tfv.fit(datalist)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 156,
+   "metadata": {
+    "collapsed": true
+   },
+   "outputs": [],
+   "source": [
+    "X = tfv.transform(datalist)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 157,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "scipy.sparse.csr.csr_matrix"
+      ]
+     },
+     "execution_count": 157,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "type(X)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 158,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "(2225, 79101)"
+      ]
+     },
+     "execution_count": 158,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "X.shape"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 165,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "numpy.ndarray"
+      ]
+     },
+     "execution_count": 165,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "import pandas as pd\n",
+    "type(y)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 166,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "array(['business', 'entertainment', 'politics', 'sport', 'tech'], dtype=object)"
+      ]
+     },
+     "execution_count": 166,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "import numpy as np\n",
+    "np.unique(y)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 169,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [],
+   "source": [
+    "y_copy = y.copy()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 170,
+   "metadata": {
+    "collapsed": true
+   },
+   "outputs": [],
+   "source": [
+    "X_copy = X.copy()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 173,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>category</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>0</th>\n",
+       "      <td>sport</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>1</th>\n",
+       "      <td>politics</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2</th>\n",
+       "      <td>sport</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>3</th>\n",
+       "      <td>politics</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>4</th>\n",
+       "      <td>business</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "   category\n",
+       "0     sport\n",
+       "1  politics\n",
+       "2     sport\n",
+       "3  politics\n",
+       "4  business"
+      ]
+     },
+     "execution_count": 173,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "y = pd.DataFrame(data=y, columns = ['category'])\n",
+    "y.head()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 193,
+   "metadata": {
+    "collapsed": true
+   },
+   "outputs": [],
+   "source": [
+    "## Preprocessing\n",
+    "\n",
+    "def encode_target(df, target_column):\n",
+    "    \"\"\"\n",
+    "    Add  column to df with integers for the target.\n",
+    "    \n",
+    "    Args\n",
+    "    ---\n",
+    "    df --- pandas Dataframe \n",
+    "    target_column  -- column to map to int, producing new target column\n",
+    "    \n",
+    "    Returns\n",
+    "    -------\n",
+    "    df_mod --- modified dataframe\n",
+    "    targets --- list of target names\n",
+    "    \"\"\"\n",
+    "    df_mod = df.copy()\n",
+    "    targets = df_mod[target_column].unique()\n",
+    "    map_to_int = {name: n for n, name in enumerate(targets)}\n",
+    "    df_mod[\"category\"] = df_mod[target_column].replace(map_to_int)\n",
+    "    \n",
+    "    return(df_mod, targets)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 194,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [],
+   "source": [
+    "y_target, targets = encode_target(y, \"category\")"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 197,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "* df.head()\n",
+      "   category\n",
+      "0         0\n",
+      "1         1\n",
+      "2         0\n",
+      "3         1\n",
+      "4         2\n",
+      "\n"
+     ]
+    }
+   ],
+   "source": [
+    "print( \"* df.head()\", y_target[[\"category\"]].head(), sep=\"\\n\", end=\"\\n\\n\")"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 198,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "* targets\n",
+      "['sport' 'politics' 'business' 'entertainment' 'tech']\n",
+      "\n"
+     ]
+    }
+   ],
+   "source": [
+    "print(\"* targets\", targets, sep = \"\\n\", end = \"\\n\\n\")"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "collapsed": true
+   },
+   "source": [
+    "## Model using XGBOOST algorithm"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 282,
+   "metadata": {
+    "collapsed": true
+   },
+   "outputs": [],
+   "source": [
+    "## import xgboost package\n",
+    "import xgboost as xgb"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 200,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "(2225, 79101)"
+      ]
+     },
+     "execution_count": 200,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "X.shape"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 201,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "(2225, 1)"
+      ]
+     },
+     "execution_count": 201,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "y_target.shape"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### Split the data into Train Test Split"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 261,
+   "metadata": {
+    "collapsed": true
+   },
+   "outputs": [],
+   "source": [
+    "from sklearn.cross_validation import train_test_split"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 262,
+   "metadata": {
+    "collapsed": true
+   },
+   "outputs": [],
+   "source": [
+    "## Split the data into traina and test dataset\n",
+    "train_X, test_X, train_y, test_y = train_test_split(X, y_target, \n",
+    "                                                    test_size = 0.30, random_state =0 )"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 263,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>category</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>1033</th>\n",
+       "      <td>1</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>1731</th>\n",
+       "      <td>1</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>763</th>\n",
+       "      <td>2</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>835</th>\n",
+       "      <td>1</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>1653</th>\n",
+       "      <td>2</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "      category\n",
+       "1033         1\n",
+       "1731         1\n",
+       "763          2\n",
+       "835          1\n",
+       "1653         2"
+      ]
+     },
+     "execution_count": 263,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "train_y.tail()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 264,
+   "metadata": {
+    "collapsed": false,
+    "scrolled": true
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>category</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>2198</th>\n",
+       "      <td>3</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>1256</th>\n",
+       "      <td>4</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>1637</th>\n",
+       "      <td>4</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2190</th>\n",
+       "      <td>0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>1581</th>\n",
+       "      <td>1</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "      category\n",
+       "2198         3\n",
+       "1256         4\n",
+       "1637         4\n",
+       "2190         0\n",
+       "1581         1"
+      ]
+     },
+     "execution_count": 264,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "test_y.tail()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 265,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [],
+   "source": [
+    "xg_train = xgb.DMatrix(train_X, label=train_y)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 266,
+   "metadata": {
+    "collapsed": true
+   },
+   "outputs": [],
+   "source": [
+    "xg_test = xgb.DMatrix(test_X, label = test_y)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 267,
+   "metadata": {
+    "collapsed": true
+   },
+   "outputs": [],
+   "source": [
+    "#setup parameters for xgboost \n",
+    "param = {}\n",
+    "\n",
+    "# use softmax-multi-class classification\n",
+    "param['objective'] = 'multi:softmax'\n",
+    "\n",
+    "#scale weight of positive examples\n",
+    "param['eta'] = 0.1\n",
+    "param['max_depth'] = 6\n",
+    "param['silent'] = 1\n",
+    "param['nthread'] = 4\n",
+    "param['num_class'] = 6"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 268,
+   "metadata": {
+    "collapsed": true
+   },
+   "outputs": [],
+   "source": [
+    "watchlist  = [(xg_train, 'train'), (xg_test, 'test')]"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 275,
+   "metadata": {
+    "collapsed": true
+   },
+   "outputs": [],
+   "source": [
+    "num_round = 50"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 276,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "name": "stderr",
+     "output_type": "stream",
+     "text": [
+      "[0]\ttrain-merror:0.082852\ttest-merror:0.179641\n",
+      "[1]\ttrain-merror:0.048170\ttest-merror:0.142216\n",
+      "[2]\ttrain-merror:0.048812\ttest-merror:0.158683\n",
+      "[3]\ttrain-merror:0.036609\ttest-merror:0.133234\n",
+      "[4]\ttrain-merror:0.035324\ttest-merror:0.130240\n",
+      "[5]\ttrain-merror:0.030186\ttest-merror:0.118263\n",
+      "[6]\ttrain-merror:0.026333\ttest-merror:0.113772\n",
+      "[7]\ttrain-merror:0.025048\ttest-merror:0.112275\n",
+      "[8]\ttrain-merror:0.024406\ttest-merror:0.112275\n",
+      "[9]\ttrain-merror:0.025048\ttest-merror:0.113772\n",
+      "[10]\ttrain-merror:0.025048\ttest-merror:0.121257\n",
+      "[11]\ttrain-merror:0.019268\ttest-merror:0.116766\n",
+      "[12]\ttrain-merror:0.017341\ttest-merror:0.112275\n",
+      "[13]\ttrain-merror:0.017983\ttest-merror:0.116766\n",
+      "[14]\ttrain-merror:0.013487\ttest-merror:0.112275\n",
+      "[15]\ttrain-merror:0.012845\ttest-merror:0.109281\n",
+      "[16]\ttrain-merror:0.012203\ttest-merror:0.107784\n",
+      "[17]\ttrain-merror:0.010276\ttest-merror:0.113772\n",
+      "[18]\ttrain-merror:0.008992\ttest-merror:0.107784\n",
+      "[19]\ttrain-merror:0.007707\ttest-merror:0.107784\n",
+      "[20]\ttrain-merror:0.008349\ttest-merror:0.107784\n",
+      "[21]\ttrain-merror:0.007065\ttest-merror:0.107784\n",
+      "[22]\ttrain-merror:0.007707\ttest-merror:0.104790\n",
+      "[23]\ttrain-merror:0.007065\ttest-merror:0.103293\n",
+      "[24]\ttrain-merror:0.007065\ttest-merror:0.104790\n",
+      "[25]\ttrain-merror:0.007065\ttest-merror:0.103293\n",
+      "[26]\ttrain-merror:0.007065\ttest-merror:0.101796\n",
+      "[27]\ttrain-merror:0.007065\ttest-merror:0.101796\n",
+      "[28]\ttrain-merror:0.007065\ttest-merror:0.100299\n",
+      "[29]\ttrain-merror:0.007065\ttest-merror:0.097305\n",
+      "[30]\ttrain-merror:0.006423\ttest-merror:0.092814\n",
+      "[31]\ttrain-merror:0.005780\ttest-merror:0.091317\n",
+      "[32]\ttrain-merror:0.004496\ttest-merror:0.089820\n",
+      "[33]\ttrain-merror:0.003854\ttest-merror:0.086826\n",
+      "[34]\ttrain-merror:0.002569\ttest-merror:0.086826\n",
+      "[35]\ttrain-merror:0.001927\ttest-merror:0.083832\n",
+      "[36]\ttrain-merror:0.001285\ttest-merror:0.082335\n",
+      "[37]\ttrain-merror:0.001285\ttest-merror:0.080838\n",
+      "[38]\ttrain-merror:0.001285\ttest-merror:0.077844\n",
+      "[39]\ttrain-merror:0.001285\ttest-merror:0.079341\n",
+      "[40]\ttrain-merror:0.000642\ttest-merror:0.076347\n",
+      "[41]\ttrain-merror:0.000642\ttest-merror:0.077844\n",
+      "[42]\ttrain-merror:0.000642\ttest-merror:0.074850\n",
+      "[43]\ttrain-merror:0.000642\ttest-merror:0.074850\n",
+      "[44]\ttrain-merror:0.000642\ttest-merror:0.076347\n",
+      "[45]\ttrain-merror:0.000642\ttest-merror:0.071856\n",
+      "[46]\ttrain-merror:0.000642\ttest-merror:0.068862\n",
+      "[47]\ttrain-merror:0.000642\ttest-merror:0.068862\n",
+      "[48]\ttrain-merror:0.000642\ttest-merror:0.068862\n",
+      "[49]\ttrain-merror:0.000642\ttest-merror:0.067365\n"
+     ]
+    }
+   ],
+   "source": [
+    "bst = xgb.train(param, xg_train, num_round, watchlist);"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 277,
+   "metadata": {
+    "collapsed": true
+   },
+   "outputs": [],
+   "source": [
+    "pred = bst.predict( xg_test );"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### Classification Error of the Model on Test Data Set"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 278,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "predicting, classification error=0.067365\n"
+     ]
+    }
+   ],
+   "source": [
+    "print ('predicting, classification error=%f' % (sum(int(pred[i]) != test_y.iloc[i] for i in range(len(test_y))) / float(len(test_y))))"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### Accuracy of the model = 0.932635"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### Confusion Matrix of Multi-Class Classification on the Test Data"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 279,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "array([[140,   0,   1,   0,   0],\n",
+       "       [  3, 111,   6,   2,   3],\n",
+       "       [  1,   6, 131,   0,   5],\n",
+       "       [  3,   1,   2, 124,   2],\n",
+       "       [  3,   1,   3,   3, 117]])"
+      ]
+     },
+     "execution_count": 279,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "## Create Confusion matrix\n",
+    "from sklearn.metrics import confusion_matrix\n",
+    "confusion_matrix(test_y, pred)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "#### Plot the Confusion Matrix"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 283,
+   "metadata": {
+    "collapsed": true
+   },
+   "outputs": [],
+   "source": [
+    "import matplotlib.pyplot as plt\n",
+    "%matplotlib inline"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 287,
+   "metadata": {
+    "collapsed": true
+   },
+   "outputs": [],
+   "source": [
+    "def plot_confusion_matrix(cm, title = \"Confusion Matrix\", cmap = plt.cm.Blues):\n",
+    "    plt.imshow(cm, interpolation ='nearest', cmap=cmap)\n",
+    "    plt.title(title)\n",
+    "    plt.colorbar()\n",
+    "    tick_marks = np.arange(len(targets))\n",
+    "    plt.xticks(tick_marks, targets, rotation=45)\n",
+    "    plt.yticks(tick_marks, targets)\n",
+    "    plt.tight_layout()\n",
+    "    plt.ylabel('True label')\n",
+    "    plt.xlabel('Predicted label')\n"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 292,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Confusion matrix, without normalization\n",
+      "[[140   0   1   0   0]\n",
+      " [  3 111   6   2   3]\n",
+      " [  1   6 131   0   5]\n",
+      " [  3   1   2 124   2]\n",
+      " [  3   1   3   3 117]]\n"
+     ]
+    },
+    {
+     "data": {
+      "image/png": "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\nMABrDc1TqQEAAIYm1AAAAEPTfgYAAAMYePGzdadSAwAADE2oAQAAhqb9DAAABrCg/2yWSg0AADA0\noQYAABiaUAMAAAzNnBoAABjAgik1s1RqAACAoQk1AADA0LSfAQDAAKzoPE+lBgAAGJpQAwAADE37\nGQAADGAh+s/mqNQAAABDE2oAAIChaT8DAIABWP1snkoNAAAwNKEGAAAYmlADAAAMzZwaAAAYwII5\nNbNUagAAgKEJNQAAwNC0nwEAwAAWrOk8S6UGAAAYmlADAAAMTfsZAAAMQPfZPJUaAABgaEINAAAw\nNKEGAAAYmjk1AAAwAEs6z1OpAQAAhibUAAAAQ9N+BgAAA9B9Nk+lBgAAGJpQAwAADE37GQAADEA1\nYp5nAwAADE2oAQAAhqb9DAAABlCWP5ulUgMAAAxNqAEAAIYm1AAAAEMzpwYAAAZgRs08lRoAAGBo\nQg0AADA07WcAADCABUs6z1KpAQAAhibUAAAAQ9tSoaaqfqGqbrGG846sqtuv4rifr6r/s7bR7Z6q\nOqCqHrEZ9wYAYHw1wGuzbKlQk+S+SW61KydU1T5Jjkpyh50d292v7u5nrm1ou+3AJEdv0r0BAOAK\na91DTVX9WlW9p6rOqqrnVdVCVV1YVU+rqrOr6l1Vde2p0nKfJM+cjr1JVR1SVa+rqjOr6q1VdbPp\nmidO13p3klOS/G6S/z2dd8eq+rmqOqOq3l9Vp1XVtafzHlJVf7XkGs+uqndW1Seq6n7T/iOr6vSq\n+udp/3FV9aDpZ/hgVd1kOu5aVfWP0/73bK8UVdWxVfXCqnrLdP6jpkdxXJJDpjEev97PHQAA9hbr\nuvrZ1Er2gCR36O5Lquo5SX4tyX5J3tXdx0x/wf/t7n5GVb0qyau7+9Tp/DcleXh3n1dVhyd5XpK7\nTJe/YXdfFiSSXNjdz5q2D+jun5re/1aSP07y2Om8XjLE63X3HavqlkleleTUaf+tk9wiyVeTfDLJ\n87v7dlX1+0l+L8mjkzw7ybO6+11VdeMkb0jyY9P5N89i9eiAJB+vqucleVySW3X3Ybv3VAEA2BtZ\n/Gzeei/pfJckhyU5s6oqyVWTbEtyUXe/djrm/UnuuvzEqvqBLLaUvXw6N0n2XXLIy1e4742r6pQk\n15/O+Y+Z4/45Sbr73Kq6zpL9Z3b3F6dxnJfktGn/OVkMK5nGfMslY7t6Ve03vX9Nd383yVeqaluS\n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\nP9DPrEYyp7NVAAAAAElFTkSuQmCC\n",
+      "text/plain": [
+       "<matplotlib.figure.Figure at 0x7fd74b07cba8>"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    }
+   ],
+   "source": [
+    "#increase the size\n",
+    "width = 12\n",
+    "height = 12\n",
+    "\n",
+    "#compute confusion matrix\n",
+    "cm = confusion_matrix(test_y, pred)\n",
+    "np.set_printoptions(precision=2)\n",
+    "print('Confusion matrix, without normalization')\n",
+    "print(cm)\n",
+    "plt.figure(figsize=(width, height))\n",
+    "plot_confusion_matrix(cm)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### Classification Report of the Model"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 281,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "['sport' 'politics' 'business' 'entertainment' 'tech']\n",
+      "               precision    recall  f1-score   support\n",
+      "\n",
+      "        sport       0.93      0.99      0.96       141\n",
+      "     politics       0.93      0.89      0.91       125\n",
+      "     business       0.92      0.92      0.92       143\n",
+      "entertainment       0.96      0.94      0.95       132\n",
+      "         tech       0.92      0.92      0.92       127\n",
+      "\n",
+      "  avg / total       0.93      0.93      0.93       668\n",
+      "\n"
+     ]
+    }
+   ],
+   "source": [
+    "from sklearn.metrics import classification_report\n",
+    "print (targets)\n",
+    "target_names = targets\n",
+    "print(classification_report(test_y, pred, target_names = target_names))"
+   ]
+  }
+ ],
+ "metadata": {
+  "kernelspec": {
+   "display_name": "Python 3",
+   "language": "python",
+   "name": "python3"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.5.2"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 0
+}
